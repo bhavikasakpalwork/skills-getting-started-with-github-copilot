@@ -27,6 +27,37 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
         `;
 
+        // Participants section — build DOM nodes for safety and styling
+        const participantsDiv = document.createElement("div");
+        participantsDiv.className = "participants";
+
+        const participantsHeading = document.createElement("p");
+        participantsHeading.className = "participants-heading";
+        participantsHeading.textContent = "Participants:";
+        participantsDiv.appendChild(participantsHeading);
+
+        const participantsList = document.createElement("ul");
+        participantsList.className = "participants-list";
+
+        if (details.participants && details.participants.length > 0) {
+          details.participants.forEach((p) => {
+            const li = document.createElement("li");
+            const badge = document.createElement("span");
+            badge.className = "participant-badge";
+            badge.textContent = p;
+            li.appendChild(badge);
+            participantsList.appendChild(li);
+          });
+        } else {
+          const li = document.createElement("li");
+          li.className = "no-participants";
+          li.textContent = "No participants yet";
+          participantsList.appendChild(li);
+        }
+
+        participantsDiv.appendChild(participantsList);
+        activityCard.appendChild(participantsDiv);
+
         activitiesList.appendChild(activityCard);
 
         // Add option to select dropdown
