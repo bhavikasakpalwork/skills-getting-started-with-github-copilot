@@ -46,6 +46,45 @@ document.addEventListener("DOMContentLoaded", () => {
             badge.className = "participant-badge";
             badge.textContent = p;
             li.appendChild(badge);
+
+            // Delete button to unregister participant
+            const del = document.createElement("button");
+            del.className = "participant-delete";
+            del.title = "Unregister participant";
+            del.textContent = "✖";
+            // store activity name and email for the handler
+            del.dataset.activity = name;
+            del.dataset.email = p;
+
+            del.addEventListener("click", async () => {
+              try {
+                const resp = await fetch(
+                  `/activities/${encodeURIComponent(name)}/participants?email=${encodeURIComponent(p)}`,
+                  { method: "DELETE" }
+                );
+
+                const result = await resp.json();
+                if (resp.ok) {
+                  // Refresh activities to update UI
+                  fetchActivities();
+                  messageDiv.textContent = result.message || "Participant removed";
+                  messageDiv.className = "message success";
+                  messageDiv.classList.remove("hidden");
+                  setTimeout(() => messageDiv.classList.add("hidden"), 3000);
+                } else {
+                  messageDiv.textContent = result.detail || "Failed to remove participant";
+                  messageDiv.className = "message error";
+                  messageDiv.classList.remove("hidden");
+                }
+              } catch (err) {
+                console.error("Error removing participant:", err);
+                messageDiv.textContent = "Network error removing participant";
+                messageDiv.className = "message error";
+                messageDiv.classList.remove("hidden");
+              }
+            });
+
+            li.appendChild(del);
             participantsList.appendChild(li);
           });
         } else {
